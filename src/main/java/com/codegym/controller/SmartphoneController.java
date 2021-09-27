@@ -35,11 +35,17 @@ public class SmartphoneController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Smartphone> deleteSmartphone(@PathVariable Long id) {
-        Optional<Smartphone> smartphoneOptional = smartphoneService.findById(id);
-        if (!smartphoneOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//        Optional<Smartphone> smartphoneOptional = smartphoneService.findById(id);
+//        if (!smartphoneOptional.isPresent()) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
         smartphoneService.remove(id);
-        return new ResponseEntity<>(smartphoneOptional.get(), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Smartphone> updateCompany(@PathVariable Long id){
+        Optional<Smartphone> smartphone1 = smartphoneService.findById(id);
+        return new ResponseEntity<>(smartphone1.get(), HttpStatus.OK);
+    }
+
 }
