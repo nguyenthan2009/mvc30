@@ -29,14 +29,16 @@
                 //tên API
                 url: "/smartphones",
                 //xử lý khi thành công
-                success: successHandler
-
-            });
+                success: function (data) {
+                  successHandler();
+                  resetFormCreate();
+                }})
             //chặn sự kiện mặc định của thẻ
             event.preventDefault();
-        }
+            }
 
         function successHandler() {
+
             $.ajax({
                 type: "GET",
                 //tên API
@@ -44,6 +46,7 @@
                 //xử lý khi thành công
                 success: function (data) {
                     // hien thi danh sach o day
+
                     let content = '    <tr>\n' +
                         '        <td>Producer</td>\n' +
                         '        <td>Model</td>\n' +
@@ -59,13 +62,17 @@
 <td><a href="${data[i].id}" onclick="deletePhone(this)">Xoá</a></td>
 <td><a href="${data[i].id}" onclick="editSmartPhone(this)">Sửa</a></td>
                     </tr>`
+
+
                     }
                     document.getElementById('smartphoneList').innerHTML = content;
                 }
             });
+            event.preventDefault();
         }
 
-            //sư kiện nào thực hiện Ajax
+
+        //sư kiện nào thực hiện Ajax
         function deletePhone(e){
                 let smartphoneId = e.getAttribute("href");
                 // goi ajax
@@ -96,11 +103,58 @@
             })
             event.preventDefault();
         }
+        function search(){
+            let search = $("#producer1").val()
+            $.ajax({
+                url: "/smartphones/search?producer="+search,
+                type: 'GET',
+                success: function (data) {
+                    // hien thi danh sach o day
+                    let content = '    <tr>\n' +
+                        '        <td>Producer</td>\n' +
+                        '        <td>Model</td>\n' +
+                        '        <td>Price</td>\n' +
+                        '        <td>Delete</td>\n' +
+                        '        <td>Edit</td>\n' +
+                        '    </tr>';
+                    for (let i = 0; i < data.length; i++) {
+                        content += `<tr>
+<td>${data[i].producer}</td>
+<td>${data[i].model}</td>
+<td>${data[i].price}</td>
+<td><a href="${data[i].id}" onclick="deletePhone(this)">Xoá</a></td>
+<td><a href="${data[i].id}" onclick="editSmartPhone(this)">Sửa</a></td>
+                    </tr>`
+                    }
+                    document.getElementById('smartphoneList').innerHTML = content;
+                }
+
+
+
+
+
+            })
+            event.preventDefault();
+
+
+        }
+        function resetFormCreate(){
+            $('#producer').val('');
+            $('#model').val('');
+            $('#price').val('');
+            $('#id').val('')
+        }
 
     </script>
 </head>
 <body>
 <form id="add-smartphone">
+    <tr>
+        <td>Search:</td>
+        <td><input type="text" id="producer1" name="producer" placeholder="producer"></td>
+        <td><input id="btn-create1" type="submit" value="Search" onclick="search()"></td>
+
+    </tr>
     <table>
         <tr>
             <td><input  id="id" type="hidden"></td>
@@ -142,5 +196,13 @@
         </tr>
     </th:block>
 </table>
+<div>
+    <div>
+        <a th:href="@{'/smartphones/list'(page=${smartphones.number-1})}" th:if="${smartphones.hasPrevious()}">Back</a>
+        <span th:utext="${smartphones.number+1}"></span>/<span th:utext="${smartphones.totalPages}"></span>
+        <a th:href="@{'/smartphones/list'(page=${smartphones.number+1})}" th:if="${smartphones.hasNext()}">Next</a>
+    </div>
+</div>
+
 </body>
 </html>
